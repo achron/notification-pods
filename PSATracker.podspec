@@ -15,8 +15,7 @@ Pod::Spec.new do |s|
 
   # основной модуль
   s.subspec 'Core' do |ss|
-    ss.source_files = 'PSATracker/**/*.{h,m, swift}'
-    ss.source_files = 'PSATracker/Tracker/**/*.{h,m, swift}'  
+    ss.source_files = 'PSATracker/**/*.{h,m,swift}'
   end
 
   # контент-экстеншн
