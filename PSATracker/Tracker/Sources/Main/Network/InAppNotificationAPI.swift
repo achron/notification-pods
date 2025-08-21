@@ -9,29 +9,31 @@ class InAppNotificationAPI {
 
     func fetchNotifications(completion: @escaping ([InAppNotification]?) -> Void) {
         let request = Request(
-            url: baseURL,
-            method: .get,
+            urlString: baseURL,                // ⚡️ urlString вместо url
+            method: HttpMethodOptions.GET,     // ⚡️ .GET вместо .get
             headers: ["Content-Type": "application/json"],
-            body: nil
+            body: nil as Data?                 // ⚡️ явно указываем тип
         )
 
-        DefaultNetworkConnection().send(request: request) { (result: RequestResult<Data>) in
-            switch result {
-            case .success(let data):
-                do {
-                    let notifications = try JSONDecoder().decode([InAppNotification].self, from: data)
-                    completion(notifications)
-                } catch {
-                    print("JSON decode error: \(error)")
-                    completion(nil)
-                }
-            case .failure(let error):
-                print("Network error: \(error)")
-                completion(nil)
-            }
-        }
+    // TODO: Fetch example
+        // DefaultNetworkConnection().execute(request: request) { result in
+        //     switch result {
+        //     case .success(let data):
+        //         do {
+        //             let notifications = try JSONDecoder().decode([InAppNotification].self, from: data)
+        //             completion(notifications)
+        //         } catch {
+        //             print("JSON decode error: \(error)")
+        //             completion(nil)
+        //         }
+        //     case .failure(let error):
+        //         print("Network error: \(error)")
+        //         completion(nil)
+        //     }
+        // }
     }
 }
+
 
 class InAppNotificationManager {
     static let shared = InAppNotificationManager()
