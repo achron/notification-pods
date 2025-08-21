@@ -25,6 +25,20 @@ public class PSATracker: NSObject {
     private static var serviceProviderInstances: [String : ServiceProvider] = [:]
     private static var configurationProvider: RemoteConfigurationProvider?
     private static var defaultServiceProvider: ServiceProvider?
+
+    public static func initialize(apiKey: String) {
+        // TODO: To no be imported from POD
+        // if FirebaseApp.app() == nil {
+        //     FirebaseApp.configure()
+        // }
+        // PushManager.shared.registerForPushNotifications()
+        
+        InAppNotificationAPI.shared.fetchNotifications { notifications in
+            if let first = notifications?.first {
+                InAppNotificationManager.shared.showNotification(first)
+            }
+        }
+    }
     
     /// Remote Configuration
 
