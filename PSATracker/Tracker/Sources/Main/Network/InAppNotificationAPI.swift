@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 class InAppNotificationAPI {
     static let shared = InAppNotificationAPI()
@@ -28,6 +29,27 @@ class InAppNotificationAPI {
                 print("Network error: \(error)")
                 completion(nil)
             }
+        }
+    }
+}
+
+class InAppNotificationManager {
+    static let shared = InAppNotificationManager()
+    private init() {}
+    
+    func showNotification(_ notification: InAppNotification) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: notification.title, message: notification.message, preferredStyle: .alert)
+            if let deepLink = notification.deepLink {
+                alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { _ in
+                    if let url = URL(string: deepLink) {
+                        UIApplication.shared.open(url)
+                    }
+                }))
+            }
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+            
+            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
         }
     }
 }
