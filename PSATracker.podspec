@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
 
   s.dependency 'FMDB'
   s.dependency 'Firebase/Messaging'
-  s.dependency 'Firebase/Core
+  s.dependency 'Firebase/Core'
 
 
   # основной модуль
