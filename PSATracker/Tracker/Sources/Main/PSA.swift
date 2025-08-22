@@ -64,6 +64,14 @@ public class PSATracker: NSObject {
         TrackerManager.shared.loginEvent()
     }
 
+    public func logout() {
+        TrackerManager.shared.logout()
+    }
+
+    public func updateFcm() {
+        TrackerManager.shared.updateFcm()
+    }
+
     // MARK: - Public API AppDelegate
     public func didRegisterForRemoteNotifications(_ deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
