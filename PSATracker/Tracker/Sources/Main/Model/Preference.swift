@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Preference{
+public class Preference{
     static let shared = Preference()
     static private let userDefault = UserDefaults(suiteName:"group.com.app.psa")
     private init(){
