@@ -1,6 +1,9 @@
-// MARK: - Firebase Dynamic Setup
+ // MARK: - Firebase Dynamic Setup
 import UIKit
 import UserNotifications
+import FirebaseMessaging
+import FirebaseCore
+ 
 
 public class PSAPushNotificationManager: NSObject {
     
@@ -136,14 +139,14 @@ extension PSAPushNotificationManager: UNUserNotificationCenterDelegate {
 extension PSAPushNotificationManager: MessagingDelegate {
     public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(fcmToken ?? "nil")")
-        Preference.fcmToken = fcmToken ?? ""
+//        Preference.fcmToken = fcmToken ?? ""
         TrackerManager.shared.updateFcm()
         NotificationCenter.default.post(name: .init("FCMToken"), object: nil, userInfo: ["token": fcmToken ?? ""])
     }
     
-    public func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
-        print("Received data message: \(remoteMessage.appData)")
-    }
+//    public func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
+//        print("Received data message: \(remoteMessage.appData)")
+//    }
 }
 
 

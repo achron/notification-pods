@@ -2,6 +2,7 @@
 
 import Foundation
 import PSATracker
+import FirebaseCore
 
 class TrackerManager {
      var tracker: TrackerController?
@@ -133,8 +134,8 @@ static let shared = TrackerManager()
         }
         tracker.subject?.userId = Preference.userId
         let data = [
-            "email": Preference.email,
-            "firstName": Preference.name,
+//            "email": Preference.email,
+//            "firstName": Preference.name,
             "lastName": "YOUR_LAST_NAME",
             "phone": "YOUR_PHONE",
             "gender": "YOUR_GENDER",
@@ -152,3 +153,17 @@ static let shared = TrackerManager()
 
     }
 }
+
+
+class Preference {
+    static var userId: String? {
+        get { UserDefaults.standard.string(forKey: "userId") }
+        set { UserDefaults.standard.set(newValue, forKey: "userId") }
+    }
+    
+    static var fcmToken: String? {
+        get { UserDefaults.standard.string(forKey: "fcmToken") }
+        set { UserDefaults.standard.set(newValue, forKey: "fcmToken") }
+    }
+}
+

@@ -1,11 +1,10 @@
-
-
 import Foundation
 #if os(iOS) || os(macOS)
 import WebKit
 import UserNotifications
+import FirebaseMessaging
+import FirebaseCore
 #endif
-
 /// Entry point to instance a new Snowplow tracker.
 ///
 /// The following example initializes a tracker instance using the ``createTracker(namespace:endpoint:method:)`` method and tracks a ``SelfDescribing`` event:
@@ -26,30 +25,25 @@ public class PSATracker: NSObject {
     private static var serviceProviderInstances: [String : ServiceProvider] = [:]
     private static var configurationProvider: RemoteConfigurationProvider?
     private static var defaultServiceProvider: ServiceProvider?
-
     public static let shared = PSATracker()
     private override init() { super.init() }
-
     private var apiKey: String?
-
     public func initialize(apiKey: String) {
         self.apiKey = apiKey
         self.setupTracker()
         self.setupNotifications()
-        self.shared.TrackerManager.initialize()
+//        PSATracker.shared.TrackerManager.initialize()
+        TrackerManager.shared.initializeTracker()
     }
-
     // MARK: - Tracker
     private func setupTracker() {
         PSATracker.initialize(apiKey: self.apiKey ?? "")
         print("Tracker initialized with key: \(apiKey ?? "")")
     }
-
     // MARK: - Push Notifications
     private func setupNotifications() {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
-
         let action1 = UNNotificationAction(identifier: "action_1", title: "Back", options: [])
         let action2 = UNNotificationAction(identifier: "action_2", title: "Next", options: [])
         let action3 = UNNotificationAction(identifier: "action_3", title: "View In App", options: [])
@@ -59,16 +53,13 @@ public class PSATracker: NSObject {
                                               options: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
-
     // MARK: - Public API AppDelegate
     public func didRegisterForRemoteNotifications(_ deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
     }
-
     public func didFailToRegisterForRemoteNotifications(_ error: Error) {
         print("Failed to register for remote notifications: \(error)")
     }
-
     public func handleRemoteNotification(_ userInfo: [AnyHashable: Any],
                                          completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // Логика обработки пуша + трекер
@@ -76,12 +67,10 @@ public class PSATracker: NSObject {
         self.trackNotificationEvent(userInfo: userInfo, type: "received")
         completionHandler(.newData)
     }
-
     // MARK: - Tracker events
     private func trackNotificationEvent(userInfo: [AnyHashable: Any], type: String) {
         print("Tracking notification \(type): \(userInfo)")
     }
-
     public static func initialize(apiKey: String) {
         // TODO: To no be imported from POD
         // if FirebaseApp.app() == nil {
@@ -97,7 +86,6 @@ public class PSATracker: NSObject {
     }
     
     /// Remote Configuration
-
     /// Setup a single or a set of tracker instances which will be used inside the app to track events.
     ///
     /// The app can run multiple tracker instances which will be identified by string `namespaces`.
@@ -139,7 +127,6 @@ public class PSATracker: NSObject {
             onSuccess(namespaces, configurationState)
         })
     }
-
     /// Reconfigure, create or delete the trackers based on the configuration downloaded remotely.
     ///
     /// The trackers configuration is automatically download from the endpoint indicated in the `RemoteConfiguration`
@@ -166,9 +153,7 @@ public class PSATracker: NSObject {
             onSuccess(namespaces, configurationState)
         })
     }
-
     /// Standard Configuration
-
     /// Create a new tracker instance which will be used inside the app to track events.
     ///
     /// The app can run multiple tracker instances which will be identified by string `namespaces`.
@@ -197,7 +182,6 @@ public class PSATracker: NSObject {
         let networkConfiguration = NetworkConfiguration(endpoint: endpoint, method: method)
         return createTracker(namespace: namespace, network: networkConfiguration, configurations: [])
     }
-
 #if swift(>=5.4)
     /// Create a new tracker instance which will be used inside the app to track events.
     ///
@@ -230,7 +214,6 @@ public class PSATracker: NSObject {
                              configurations: configurations)
     }
 #endif
-
     /// Create a new tracker instance which will be used inside the app to track events.
     ///
     /// The app can run multiple tracker instances which will be identified by string `namespaces`.
@@ -267,7 +250,6 @@ public class PSATracker: NSObject {
             return serviceProvider.trackerController
         }
     }
-
 #if swift(>=5.4)
     /// Create a new tracker instance which will be used inside the app to track events.
     ///
@@ -309,7 +291,6 @@ public class PSATracker: NSObject {
     public class func defaultTracker() -> TrackerController? {
         return defaultServiceProvider?.trackerController
     }
-
     /// Using the namespace identifier is possible to get the trackerController if already instanced.
     ///
     /// - Parameter namespace: The namespace that identifies the tracker.
@@ -318,7 +299,6 @@ public class PSATracker: NSObject {
     public class func tracker(namespace: String) -> TrackerController? {
         return serviceProviderInstances[namespace]?.trackerController
     }
-
     /// Set the passed tracker as default tracker if it's registered as an active tracker in the app.
     ///
     /// If the passed instance is of a tracker which is already removed (see `removeTracker`) then it can't become the new default tracker
@@ -338,7 +318,6 @@ public class PSATracker: NSObject {
         }
         return false
     }
-
     /// Remove a tracker from the active trackers of the app.
     ///
     /// Once it has been removed it can't be added again or set as default.
@@ -363,7 +342,6 @@ public class PSATracker: NSObject {
         }
         return false
     }
-
     /// Remove all the trackers.
     ///
     /// The removed tracker is always stopped.
@@ -380,29 +358,22 @@ public class PSATracker: NSObject {
         }
         objc_sync_exit(self)
     }
-
     /// - Returns: Set of namespace of the active trackers in the app.
     @objc
     class public var instancedTrackerNamespaces: [String] {
         return Array(serviceProviderInstances.keys)
     }
-
     #if os(iOS) || os(macOS)
-
     /// Subscribe to events tracked in a Web view using the Snowplow WebView tracker JavaScript library.
     ///
     /// - Parameter webViewConfiguration: Configuration of the Web view to subscribe to events from
     @objc
     public class func subscribeToWebViewEvents(with webViewConfiguration: WKWebViewConfiguration) {
         let messageHandler = WebViewMessageHandler()
-
         webViewConfiguration.userContentController.add(messageHandler, name: "snowplow")
     }
-
     #endif
-
     // MARK: - Private methods
-
     private class func registerInstance(_ serviceProvider: ServiceProvider) -> Bool {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
@@ -414,7 +385,6 @@ public class PSATracker: NSObject {
         }
         return isOverriding
     }
-
     private class func createTrackers(configurationBundles bundles: [ConfigurationBundle]) -> [String] {
         var namespaces: [String]? = []
         for bundle in bundles {
@@ -437,15 +407,14 @@ public class PSATracker: NSObject {
         return namespaces ?? []
     }
 }
-
 // MARK: - Delegates
+@available(iOS 14.0, *)
 extension PSATracker: UNUserNotificationCenterDelegate, MessagingDelegate {
     public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("FCM Token: \(fcmToken ?? "nil")")
         NotificationCenter.default.post(name: .init("FCMToken"), object: nil,
                                         userInfo: ["token": fcmToken ?? ""])
     }
-
     public func userNotificationCenter(_ center: UNUserNotificationCenter,
                                        willPresent notification: UNNotification,
                                        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -453,12 +422,25 @@ extension PSATracker: UNUserNotificationCenterDelegate, MessagingDelegate {
         self.trackNotificationEvent(userInfo: userInfo, type: "delivered")
         completionHandler([.badge, .sound, .banner])
     }
-
     public func userNotificationCenter(_ center: UNUserNotificationCenter,
                                        didReceive response: UNNotificationResponse,
                                        withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         self.trackNotificationEvent(userInfo: userInfo, type: "clicked")
         completionHandler()
+    }
+    
+    public static func initialize(application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        // Firebase Config
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
+        // Регистрируем пуши
+        UNUserNotificationCenter.current().delegate = shared
+        Messaging.messaging().delegate = shared
+        application.registerForRemoteNotifications()
+        // Создаём кастомные категории действий (как у тебя уже есть)
+        shared.setupNotifications()
+        print("PSATracker initialized with Firebase and Push Notifications")
     }
 }
