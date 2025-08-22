@@ -74,6 +74,17 @@ public class PSATracker: NSObject {
         TrackerManager.shared.updateFcm()
     }
 
+    @discardableResult
+    public func setPreferenceData(from data: LoginResponse) -> Preference {
+        Preference.email = data.email
+        Preference.userId = data.id
+        Preference.userToken = data.token ?? ""
+        Preference.isLogedIn = true
+        
+        print("✅ Login data set: \(data)")
+        return Preference
+    }
+
     // MARK: - Public API AppDelegate
     public func didRegisterForRemoteNotifications(_ deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
