@@ -153,17 +153,3 @@ static let shared = TrackerManager()
 
     }
 }
-
-
-class Preference {
-    static var userId: String? {
-        get { UserDefaults.standard.string(forKey: "userId") }
-        set { UserDefaults.standard.set(newValue, forKey: "userId") }
-    }
-    
-    static var fcmToken: String? {
-        get { UserDefaults.standard.string(forKey: "fcmToken") }
-        set { UserDefaults.standard.set(newValue, forKey: "fcmToken") }
-    }
-}
-

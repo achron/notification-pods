@@ -56,6 +56,8 @@ public class PSATracker: NSObject {
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
 
+
+    // MARK: - Tracker Manager Events Tracking Methods
     public func userEvent() {
         TrackerManager.shared.userEvent()
     }
