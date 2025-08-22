@@ -3,6 +3,9 @@
 import Foundation
 #if os(iOS) || os(macOS)
 import WebKit
+import UserNotifications
+import Firebase
+import FirebaseMessaging
 #endif
 
 /// Entry point to instance a new Snowplow tracker.
@@ -25,6 +28,61 @@ public class PSATracker: NSObject {
     private static var serviceProviderInstances: [String : ServiceProvider] = [:]
     private static var configurationProvider: RemoteConfigurationProvider?
     private static var defaultServiceProvider: ServiceProvider?
+
+    public static let shared = PSATracker()
+    private override init() { super.init() }
+
+    private var apiKey: String?
+
+    public func initialize(apiKey: String) {
+        self.apiKey = apiKey
+        self.setupTracker()
+        self.setupNotifications()
+    }
+
+    // MARK: - Tracker
+    private func setupTracker() {
+        PSATracker.initialize(apiKey: self.apiKey ?? "")
+        print("Tracker initialized with key: \(apiKey ?? "")")
+    }
+
+    // MARK: - Push Notifications
+    private func setupNotifications() {
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+
+        let action1 = UNNotificationAction(identifier: "action_1", title: "Back", options: [])
+        let action2 = UNNotificationAction(identifier: "action_2", title: "Next", options: [])
+        let action3 = UNNotificationAction(identifier: "action_3", title: "View In App", options: [])
+        let category = UNNotificationCategory(identifier: "PSANotification",
+                                              actions: [action1, action2, action3],
+                                              intentIdentifiers: [],
+                                              options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+
+    // MARK: - Public API AppDelegate
+    public func didRegisterForRemoteNotifications(_ deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+    public func didFailToRegisterForRemoteNotifications(_ error: Error) {
+        print("Failed to register for remote notifications: \(error)")
+    }
+
+    public func handleRemoteNotification(_ userInfo: [AnyHashable: Any],
+                                         completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // Логика обработки пуша + трекер
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        self.trackNotificationEvent(userInfo: userInfo, type: "received")
+        completionHandler(.newData)
+    }
+
+    // MARK: - Tracker events
+    private func trackNotificationEvent(userInfo: [AnyHashable: Any], type: String) {
+        // Здесь можно делать вызов TrackerManager
+        print("Tracking notification \(type): \(userInfo)")
+    }
 
     public static func initialize(apiKey: String) {
         // TODO: To no be imported from POD
@@ -379,5 +437,30 @@ public class PSATracker: NSObject {
             objc_sync_exit(self)
         }
         return namespaces ?? []
+    }
+}
+
+// MARK: - Delegates
+extension PSATracker: UNUserNotificationCenterDelegate, MessagingDelegate {
+    public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("FCM Token: \(fcmToken ?? "nil")")
+        NotificationCenter.default.post(name: .init("FCMToken"), object: nil,
+                                        userInfo: ["token": fcmToken ?? ""])
+    }
+
+    public func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                       willPresent notification: UNNotification,
+                                       withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+        self.trackNotificationEvent(userInfo: userInfo, type: "delivered")
+        completionHandler([.badge, .sound, .banner])
+    }
+
+    public func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                       didReceive response: UNNotificationResponse,
+                                       withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        self.trackNotificationEvent(userInfo: userInfo, type: "clicked")
+        completionHandler()
     }
 }

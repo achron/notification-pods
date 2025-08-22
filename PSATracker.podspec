@@ -11,6 +11,8 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'FMDB'
+  s.dependency 'Firebase/Messaging'
+  s.dependency 'Firebase/Core
 
 
   # основной модуль
