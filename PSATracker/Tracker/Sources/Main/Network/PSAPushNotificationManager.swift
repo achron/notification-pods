@@ -144,9 +144,14 @@ extension PSAPushNotificationManager: MessagingDelegate {
         NotificationCenter.default.post(name: .init("FCMToken"), object: nil, userInfo: ["token": fcmToken ?? ""])
     }
     
-   public func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
-       print("Received data message: \(remoteMessage.appData)")
-   }
+    public func handleRemoteNotification(_ userInfo: [AnyHashable: Any],
+                                        completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // Обработка кастомных данных
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        print("Received push: \(userInfo)")
+
+        completionHandler(.newData)
+    }
 }
 
 

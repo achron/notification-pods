@@ -83,7 +83,7 @@ public class PSATracker: NSObject {
     }
     public func handleRemoteNotification(_ userInfo: [AnyHashable: Any],
                                          completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // Логика обработки пуша + трекер
+
         Messaging.messaging().appDidReceiveMessage(userInfo)
         self.trackNotificationEvent(userInfo: userInfo, type: "received")
         completionHandler(.newData)
