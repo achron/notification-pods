@@ -32,7 +32,8 @@ public class PSATracker: NSObject {
         self.apiKey = apiKey
         self.setupTracker()
         self.setupNotifications()
-//        PSATracker.shared.TrackerManager.initialize()
+        _ = Preference.shared
+    //    PSATracker.initialize()
         TrackerManager.shared.initializeTracker()
         TrackerManager.shared.loginEvent()
         TrackerManager.shared.userEvent()
@@ -72,6 +73,38 @@ public class PSATracker: NSObject {
 
     public func updateFcm() {
         TrackerManager.shared.updateFcm()
+    }
+
+    public func updatePreferences(email: String, userId: String, userToken: String, isLogedIn: Bool = true) {
+        Preference.email = email
+        Preference.userId = userId
+        Preference.userToken = userToken
+        Preference.isLogedIn = isLogedIn
+        
+        print("Preferences updated: email=\(email), userId=\(userId), token=\(userToken)")
+        
+        PSATracker.shared.loginEvent()
+        PSATracker.shared.userEvent()
+    }
+
+    public func getPreferenceEmail() -> String {
+        return Preference.email
+    }
+
+    public func getPreferenceIsLogedIn() -> Bool {
+        return Preference.isLogedIn
+    }
+
+    public func getPreferenceToken() -> String {
+        return Preference.fcmToken
+    }
+
+    public func updateToken(token: String) {
+        Preference.fcmToken = token
+    }
+
+    public func preferencesDeleteAll() {
+        Preference.deleteAll()
     }
 
     // MARK: - Public API AppDelegate
