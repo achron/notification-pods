@@ -74,15 +74,36 @@ public class PSATracker: NSObject {
         TrackerManager.shared.updateFcm()
     }
 
-    @discardableResult
-    public func setPreferenceData(from data: LoginResponse) -> Preference {
-        Preference.email = data.email
-        Preference.userId = data.id
-        Preference.userToken = data.token ?? ""
-        Preference.isLogedIn = true
+    public func updatePreferences(email: String, userId: String, userToken: String, isLogedIn: Bool = true) {
+        Preference.email = email
+        Preference.userId = userId
+        Preference.userToken = userToken
+        Preference.isLogedIn = false
         
-        print("✅ Login data set: \(data)")
-        return Preference
+        print("Preferences updated: email=\(email), userId=\(userId), token=\(userToken)")
+        
+        PSATracker.shared.loginEvent()
+        PSATracker.shared.userEvent()
+    }
+
+    public func getPreferenceEmail() -> String {
+        return Preference.email
+    }
+
+    public func getPreferenceIsLogedIn() -> Bool {
+        return Preference.isLogedIn
+    }
+
+    public func getPreferenceToken() -> String {
+        return Preference.fcmToken
+    }
+
+    public func updateToken(token: String) {
+        Preference.fcmToken = token
+    }
+
+    public func preferencesDeleteAll() {
+        Preference.deleteAll()
     }
 
     // MARK: - Public API AppDelegate
