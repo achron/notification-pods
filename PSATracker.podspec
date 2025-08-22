@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.dependency 'Firebase/Core'
   s.dependency 'Firebase/Auth'     # If you need authentication
   s.dependency 'Firebase/Database' # If you need Realtime Database
-  s.dependency 'Firebase/Firestore
+  s.dependency 'Firebase/Firestore'
 
 
   # основной модуль
