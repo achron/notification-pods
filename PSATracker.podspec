@@ -11,8 +11,10 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'FMDB'
-  s.dependency 'Firebase/Messaging'
   s.dependency 'Firebase/Core'
+  s.dependency 'Firebase/Auth'     # If you need authentication
+  s.dependency 'Firebase/Database' # If you need Realtime Database
+  s.dependency 'Firebase/Firestore
 
 
   # основной модуль

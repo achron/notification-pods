@@ -1,7 +1,5 @@
 // MARK: - Firebase Dynamic Setup
 import UIKit
-import Firebase
-import FirebaseMessaging
 import UserNotifications
 
 public class PSAPushNotificationManager: NSObject {

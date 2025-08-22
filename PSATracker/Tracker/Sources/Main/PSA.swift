@@ -4,8 +4,6 @@ import Foundation
 #if os(iOS) || os(macOS)
 import WebKit
 import UserNotifications
-import Firebase
-import FirebaseMessaging
 #endif
 
 /// Entry point to instance a new Snowplow tracker.
@@ -38,6 +36,7 @@ public class PSATracker: NSObject {
         self.apiKey = apiKey
         self.setupTracker()
         self.setupNotifications()
+        self.shared.TrackerManager.initialize()
     }
 
     // MARK: - Tracker
@@ -80,7 +79,6 @@ public class PSATracker: NSObject {
 
     // MARK: - Tracker events
     private func trackNotificationEvent(userInfo: [AnyHashable: Any], type: String) {
-        // Здесь можно делать вызов TrackerManager
         print("Tracking notification \(type): \(userInfo)")
     }
 

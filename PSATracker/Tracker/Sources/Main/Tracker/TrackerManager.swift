@@ -39,7 +39,7 @@ static let shared = TrackerManager()
                         
                         if enableTracker == "p" {
             
-                            self.tracker = PSATracker.createTracker(namespace: "psa-swift", endpoint: "https://psasdk.proemsportsanalytics.com") {
+                            self.tracker = PSATracker.createTracker(namespace: "psa-swift", endpoint: "") {
                                 TrackerConfiguration()
                                     .appId("72946530")
                                     .base64Encoding(true)
