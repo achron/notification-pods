@@ -34,6 +34,8 @@ public class PSATracker: NSObject {
         self.setupNotifications()
 //        PSATracker.shared.TrackerManager.initialize()
         TrackerManager.shared.initializeTracker()
+        TrackerManager.shared.loginEvent()
+        TrackerManager.shared.userEvent()
     }
     // MARK: - Tracker
     private func setupTracker() {
@@ -53,6 +55,15 @@ public class PSATracker: NSObject {
                                               options: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
+
+    public func userEvent() {
+        TrackerManager.shared.userEvent()
+    }
+
+    public func loginEvent() {
+        TrackerManager.shared.loginEvent()
+    }
+
     // MARK: - Public API AppDelegate
     public func didRegisterForRemoteNotifications(_ deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
