@@ -1,5 +1,5 @@
 //
-//  Preference.swift
+//  Preference.shared.swift
 //  dummy
 //
 //  Created by Tejas Kashyap on 24/01/24.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-public class Preference{
-    static let shared = Preference()
+public class Preference.shared{
+    static let shared = Preference.shared()
     static private let userDefault = UserDefaults(suiteName:"group.com.app.psa")
     private init(){
         

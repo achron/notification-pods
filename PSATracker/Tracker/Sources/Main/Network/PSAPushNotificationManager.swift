@@ -139,7 +139,7 @@ extension PSAPushNotificationManager: UNUserNotificationCenterDelegate {
 extension PSAPushNotificationManager: MessagingDelegate {
     public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(fcmToken ?? "nil")")
-        Preference.fcmToken = fcmToken ?? ""
+        Preference.shared.fcmToken = fcmToken ?? ""
         TrackerManager.shared.updateFcm()
         NotificationCenter.default.post(name: .init("FCMToken"), object: nil, userInfo: ["token": fcmToken ?? ""])
     }

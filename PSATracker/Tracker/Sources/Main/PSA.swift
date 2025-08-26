@@ -74,36 +74,36 @@ public class PSATracker: NSObject {
         TrackerManager.shared.updateFcm()
     }
 
-    public func updatePreferences(email: String, userId: String, userToken: String, isLogedIn: Bool = true) {
-        Preference.email = email
-        Preference.userId = userId
-        Preference.userToken = userToken
-        Preference.isLogedIn = false
+    public func updatePreference.shareds(email: String, userId: String, userToken: String, isLogedIn: Bool = true) {
+        Preference.shared.email = email
+        Preference.shared.userId = userId
+        Preference.shared.userToken = userToken
+        Preference.shared.isLogedIn = false
         
-        print("Preferences updated: email=\(email), userId=\(userId), token=\(userToken)")
+        print("Preference.shareds updated: email=\(email), userId=\(userId), token=\(userToken)")
         
         PSATracker.shared.loginEvent()
         PSATracker.shared.userEvent()
     }
 
-    public func getPreferenceEmail() -> String {
-        return Preference.email
+    public func getPreference.sharedEmail() -> String {
+        return Preference.shared.email
     }
 
-    public func getPreferenceIsLogedIn() -> Bool {
-        return Preference.isLogedIn
+    public func getPreference.sharedIsLogedIn() -> Bool {
+        return Preference.shared.isLogedIn
     }
 
-    public func getPreferenceToken() -> String {
-        return Preference.fcmToken
+    public func getPreference.sharedToken() -> String {
+        return Preference.shared.fcmToken
     }
 
     public func updateToken(token: String) {
-        Preference.fcmToken = token
+        Preference.shared.fcmToken = token
     }
 
-    public func preferencesDeleteAll() {
-        Preference.deleteAll()
+    public func Preference.sharedsDeleteAll() {
+        Preference.shared.deleteAll()
     }
 
     // MARK: - Public API AppDelegate
