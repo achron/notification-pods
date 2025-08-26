@@ -99,17 +99,17 @@ static let shared = TrackerManager()
     }
 
      func updateFcm() {
-        tracker?.subject?.userId = Preference.shared.userId
+        tracker?.subject?.userId = Preference.userId
         let event = SelfDescribing(
             schema: "iglu:com.proemsportsanalytics/update_fcm_token/jsonschema/1-0-0",
-            payload: ["fcm_token": Preference.shared.fcmToken]
+            payload: ["fcm_token": Preference.fcmToken]
         )
         tracker?.track(event)
     }
 
      func loginEvent() {
-        tracker?.subject?.userId = Preference.shared.userId
-        let data = ["user_id": Preference.shared.userId]
+        tracker?.subject?.userId = Preference.userId
+        let data = ["user_id": Preference.userId]
         let event = SelfDescribing(
             schema: "iglu:com.proemsportsanalytics/login/jsonschema/1-0-0",
             payload: data
@@ -118,8 +118,8 @@ static let shared = TrackerManager()
     }
 
      func logout() {
-        tracker?.subject?.userId = Preference.shared.userId
-        let data = ["user_id": Preference.shared.userId]
+        tracker?.subject?.userId = Preference.userId
+        let data = ["user_id": Preference.userId]
         let event = SelfDescribing(
             schema: "iglu:com.proemsportsanalytics/logout/jsonschema/1-0-0",
             payload: data
@@ -132,10 +132,10 @@ static let shared = TrackerManager()
             print("Error: Tracker not initialized")
             return
         }
-        tracker.subject?.userId = Preference.shared.userId
+        tracker.subject?.userId = Preference.userId
         let data = [
-//            "email": Preference.shared.email,
-//            "firstName": Preference.shared.name,
+//            "email": Preference.email,
+//            "firstName": Preference.name,
             "lastName": "YOUR_LAST_NAME",
             "phone": "YOUR_PHONE",
             "gender": "YOUR_GENDER",
