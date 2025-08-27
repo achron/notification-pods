@@ -187,6 +187,7 @@ extension PSAPushNotificationManager {
                     completion(.success((false, nil)))
                     return
                 }
+                debugPrint("SUCCESS: fetchFirebaseConfig")
                 completion(.success((configToggle, configToggle ? plistURL : nil)))
             } catch {
                 completion(.failure(error))
@@ -215,6 +216,7 @@ extension PSAPushNotificationManager {
                 try plistData.write(to: plistURL)
                 if let options = FirebaseOptions(contentsOfFile: plistURL.path) {
                     FirebaseApp.configure(options: options)
+                    debugPrint("SUCCESS: Firebase configured with download plist File")
                     completion?(true)
                 } else {
                     print("Failed to create FirebaseOptions from plist")

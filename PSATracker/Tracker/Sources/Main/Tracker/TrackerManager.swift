@@ -8,6 +8,7 @@ class TrackerManager {
      var tracker: TrackerController?
 static let shared = TrackerManager()
     private init (){
+        debugPrint("SUCCESS: Tracker initialized from init()")
         initializeTracker()
     }
      func initializeTracker() {
