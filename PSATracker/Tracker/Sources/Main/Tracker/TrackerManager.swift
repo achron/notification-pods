@@ -136,7 +136,7 @@ static let shared = TrackerManager()
         tracker.subject?.userId = Preference.userId
         let data = [
            "email": Preference.email,
-           "firstName": Preference.firstName,
+           "firstName": Preference.name,
             "lastName": "YOUR_LAST_NAME",
             "phone": "YOUR_PHONE",
             "gender": "YOUR_GENDER",
