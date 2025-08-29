@@ -41,7 +41,7 @@ static let shared = TrackerManager()
                         
                         if enableTracker == "p" {
             
-                            self.tracker = PSATracker.createTracker(namespace: "psa-swift", endpoint: "") {
+                            self.tracker = PSATracker.createTracker(namespace: "psa-swift", endpoint: "https://psasdk.proemsportsanalytics.com") {
                                 TrackerConfiguration()
                                     .appId("72946530")
                                     .base64Encoding(true)
@@ -110,7 +110,7 @@ static let shared = TrackerManager()
 
      func loginEvent() {
         tracker?.subject?.userId = Preference.userId
-        let data = ["user_id": Preference.userId]
+        let data = ["user_id": Preference.userId, "user_email" : Preference.email]
         let event = SelfDescribing(
             schema: "iglu:com.proemsportsanalytics/login/jsonschema/1-0-0",
             payload: data
@@ -120,7 +120,7 @@ static let shared = TrackerManager()
 
      func logout() {
         tracker?.subject?.userId = Preference.userId
-        let data = ["user_id": Preference.userId]
+        let data = ["user_id": Preference.userId, "user_email" : Preference.email]
         let event = SelfDescribing(
             schema: "iglu:com.proemsportsanalytics/logout/jsonschema/1-0-0",
             payload: data
@@ -135,8 +135,8 @@ static let shared = TrackerManager()
         }
         tracker.subject?.userId = Preference.userId
         let data = [
-//            "email": Preference.email,
-//            "firstName": Preference.name,
+           "email": Preference.email,
+           "firstName": Preference.firstName,
             "lastName": "YOUR_LAST_NAME",
             "phone": "YOUR_PHONE",
             "gender": "YOUR_GENDER",
