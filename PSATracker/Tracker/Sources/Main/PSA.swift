@@ -31,12 +31,12 @@ public class PSATracker: NSObject {
     public func initialize(apiKey: String) {
         self.apiKey = apiKey
         self.setupTracker()
-        self.setupNotifications()
         _ = Preference.shared
-    //    PSATracker.initialize()
+        PSATracker.initialize()
         TrackerManager.shared.initializeTracker()
         TrackerManager.shared.loginEvent()
         TrackerManager.shared.userEvent()
+        self.setupNotifications()
     }
     // MARK: - Tracker
     private func setupTracker() {
@@ -47,14 +47,9 @@ public class PSATracker: NSObject {
     private func setupNotifications() {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
-        let action1 = UNNotificationAction(identifier: "action_1", title: "Back", options: [])
-        let action2 = UNNotificationAction(identifier: "action_2", title: "Next", options: [])
-        let action3 = UNNotificationAction(identifier: "action_3", title: "View In App", options: [])
-        let category = UNNotificationCategory(identifier: "PSANotification",
-                                              actions: [action1, action2, action3],
-                                              intentIdentifiers: [],
-                                              options: [])
-        UNUserNotificationCenter.current().setNotificationCategories([category])
+        
+        PSAPushNotificationManager.shared.configure(application: UIApplication.shared)
+        PSAPushNotificationManager.shared.initializeTracker(apiKey: "")
     }
 
 
@@ -130,7 +125,7 @@ public class PSATracker: NSObject {
         // if FirebaseApp.app() == nil {
         //     FirebaseApp.configure()
         // }
-        // PushManager.shared.registerForPushNotifications()
+//         PushManager.shared.registerForPushNotifications()
         
         InAppNotificationAPI.shared.fetchNotifications { notifications in
             if let first = notifications?.first {

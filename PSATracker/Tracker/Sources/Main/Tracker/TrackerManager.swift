@@ -82,7 +82,7 @@ static let shared = TrackerManager()
             schema: "iglu:com.proemsportsanalytics/notification_event/jsonschema/1-0-0",
             payload: payload
         )
-
+         
          tracker?.track(event)
     }
 
